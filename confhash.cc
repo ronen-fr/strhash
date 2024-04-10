@@ -27,7 +27,7 @@ constexpr ConfLit hashstr(const char* s, size_t index = 0) {
     return s[index] == '\0' ? 55 : hashstr(s, index + 1) * 33 + (unsigned char)(s[index]);
 }
 
-constexpr ConfLit operator""_xhash(const char* s, size_t l)
+consteval ConfLit operator""_xhash(const char* s, size_t l)
 {
   return hashstr(s);
 }
