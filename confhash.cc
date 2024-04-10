@@ -1,30 +1,25 @@
 #include <benchmark/benchmark.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
-#include <fmt/ranges.h>
-#include <vector>
-#include <array>
-#include <iostream>
-#include <string>
-#include <string_view>
-#include <sstream>
-#include <fmt/format.h>
-#include <fmt/ranges.h>
 #include <fmt/ostream.h>
-#include <cassert>
-#include <list>
+#include <fmt/ranges.h>
 
-#include <string_view>
+#include <algorithm>
+#include <array>
+#include <cassert>
 #include <cstdint>
 #include <iostream>
-#include <fmt/format.h>
+#include <list>
+#include <sstream>
+#include <string>
+#include <string_view>
 #include <vector>
-#include <algorithm>
 
 using ConfLit = uint64_t;
 
-constexpr ConfLit hashstr(const char* s, size_t index = 0) {
-    return s[index] == '\0' ? 55 : hashstr(s, index + 1) * 33 + (unsigned char)(s[index]);
+constexpr ConfLit hashstr(const char* s, size_t index = 0)
+{
+  return s[index] == '\0' ? 55 : hashstr(s, index + 1) * 33 + (unsigned char)(s[index]);
 }
 
 consteval ConfLit operator""_xhash(const char* s, size_t l)
@@ -49,7 +44,7 @@ std::array<ConfLit, 64> opt_flags;
 all_flags_t init_cur_flags()
 {
   // first - prepare our array of all possible flags
-  for (int i=0; i<64; i++) {
+  for (int i = 0; i < 64; i++) {
     auto flag_name = fmt::format("opt_{:03d}", i);
     opt_flags[i] = hashstr(flag_name.c_str());
   }
@@ -57,7 +52,7 @@ all_flags_t init_cur_flags()
   all_flags_t flags{SCRUB_W_RESERVER, SOMETHING_AFTER_1917};
 
   // do it the least optimal way
-  for (int i = 3; i < 64; i+=3) {
+  for (int i = 3; i < 64; i += 3) {
     auto flag_name = fmt::format("opt_{:03d}", i);
     flags.push_back(hashstr(flag_name.c_str()));
   }
@@ -74,11 +69,10 @@ inline bool is_flag_set(ConfLit flag, const all_flags_t& flags)
 
 
 
-
 int cnt_matches(const all_flags_t& cur)
 {
   int cnt = 0;
-  for (int i = 63; i>0; --i) {
+  for (int i = 63; i > 0; --i) {
     if (is_flag_set(opt_flags[i], cur)) {
       cnt++;
     }
@@ -89,7 +83,7 @@ int cnt_matches(const all_flags_t& cur)
 static void test_hash_based(benchmark::State& state)
 {
   auto cur_set = init_cur_flags();
-  //std::cout << fmt::format("{}: count:{}\n", __func__, cnt_matches(cur_set));
+  // std::cout << fmt::format("{}: count:{}\n", __func__, cnt_matches(cur_set));
   for (auto _ : state) {
     benchmark::DoNotOptimize(cnt_matches(cur_set));
   }
@@ -119,8 +113,8 @@ uint64_t init_bit_flags()
 int cnt_bit_matches(uint64_t cur)
 {
   int cnt = 0;
-  for (int i = 0; i<64; i++) {
-    if (is_flag_set_bit((0x01ULL<<i), cur)) {
+  for (int i = 0; i < 64; i++) {
+    if (is_flag_set_bit((0x01ULL << i), cur)) {
       cnt++;
     }
   }
@@ -160,12 +154,11 @@ void prs(char* inp)
 
 int main()
 {
-//   auto h1 = "hello"_xhash;
-//   auto h2 = "world"_xhash;
+  //   auto h1 = "hello"_xhash;
+  //   auto h2 = "world"_xhash;
 
   prs((const char*)("world"));
   prs("sss");
   prs("hello");
 }
 #endif
-
