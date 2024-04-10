@@ -83,7 +83,7 @@ inline bool is_flag_set(ConfLit flag, const all_flags_t& flags)
 int cnt_matches(const all_flags_t& cur)
 {
   int cnt = 0;
-  for (int i = 0; i<64; i++) {
+  for (int i = 63; i>0; --i) {
     if (is_flag_set(opt_flags[i], cur)) {
       cnt++;
     }
@@ -125,7 +125,7 @@ int cnt_bit_matches(uint64_t cur)
 {
   int cnt = 0;
   for (int i = 0; i<64; i++) {
-    if (is_flag_set_bit(i, cur)) {
+    if (is_flag_set_bit((0x01ULL<<i), cur)) {
       cnt++;
     }
   }
@@ -135,7 +135,7 @@ int cnt_bit_matches(uint64_t cur)
 static void test_bit_based(benchmark::State& state)
 {
   uint64_t cur_set = init_bit_flags();
-  std::cout << fmt::format("{}: count:{}\n", __func__, cnt_bit_matches(cur_set));
+  std::cout << fmt::format("{}: {:x} count:{}\n", __func__, cur_set, cnt_bit_matches(cur_set));
   for (auto _ : state) {
     benchmark::DoNotOptimize(cnt_bit_matches(cur_set));
   }
