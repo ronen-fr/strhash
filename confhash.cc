@@ -24,7 +24,6 @@
 using ConfLit = uint64_t;
 
 constexpr ConfLit hashstr(const char* s, size_t index = 0) {
-    //return s + index == nullptr || s[index] == '\0' ? 55 : hashstr(s, index + 1) * 33 + (unsigned char)(s[index]);
     return s[index] == '\0' ? 55 : hashstr(s, index + 1) * 33 + (unsigned char)(s[index]);
 }
 
@@ -38,14 +37,10 @@ constexpr ConfLit operator""_xhash(const char* s, size_t l)
 
 constexpr ConfLit SCRUB_W_RESERVER = "scrub_w_reserver"_xhash;
 constexpr ConfLit SOMETHING_AFTER_1917 = "something_after_1917"_xhash;
-//constexpr ConfLit OPT_001 = "opt 001"_xhash;
-
-//constexpr ConfLit OPT_100 = "opt 063"_xhash;
 
 // create a vector of available flags
 // (let's say - only those divided by 3)
 
-//using all_flags = std::integer_sequence<ConfLit, SCRUB_W_RESERVER, SOMETHING_AFTER_1917, OPT_001, OPT_100>;
 using all_flags_t = std::vector<ConfLit>;
 
 // a pre-prepared hashes for all opt_0xx flags
@@ -94,7 +89,7 @@ int cnt_matches(const all_flags_t& cur)
 static void test_hash_based(benchmark::State& state)
 {
   auto cur_set = init_cur_flags();
-  std::cout << fmt::format("{}: count:{}\n", __func__, cnt_matches(cur_set));
+  //std::cout << fmt::format("{}: count:{}\n", __func__, cnt_matches(cur_set));
   for (auto _ : state) {
     benchmark::DoNotOptimize(cnt_matches(cur_set));
   }
@@ -135,7 +130,7 @@ int cnt_bit_matches(uint64_t cur)
 static void test_bit_based(benchmark::State& state)
 {
   uint64_t cur_set = init_bit_flags();
-  std::cout << fmt::format("{}: {:x} count:{}\n", __func__, cur_set, cnt_bit_matches(cur_set));
+  //std::cout << fmt::format("{}: {:x} count:{}\n", __func__, cur_set, cnt_bit_matches(cur_set));
   for (auto _ : state) {
     benchmark::DoNotOptimize(cnt_bit_matches(cur_set));
   }
@@ -149,9 +144,11 @@ BENCHMARK(test_bit_based);
 
 
 
+#if 1
 
+BENCHMARK_MAIN();
 
-
+#else
 void prs(char* inp)
 {
   switch (hashstr(inp)) {
@@ -161,9 +158,6 @@ void prs(char* inp)
   }
 }
 
-#if 1
-BENCHMARK_MAIN();
-#else
 int main()
 {
 //   auto h1 = "hello"_xhash;
